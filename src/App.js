@@ -6,7 +6,7 @@ import {Gmaps, Marker, InfoWindow, Circle} from 'react-gmaps';
 import moment from 'moment';
 import { DateRange } from 'react-date-range';
 import geolib from 'geolib';
-
+import { Button } from 'react-bootstrap';
 import {Line} from 'react-chartjs-2';
 
 import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete'
@@ -226,7 +226,7 @@ class App extends Component {
 
     handleSelect(place, placeId){
         console.log(place);
-        this.setState({place});
+        this.setState({searchBox:place});
 
         geocodeByAddress(place)
             .then(results => getLatLng(results[0]))
@@ -254,12 +254,12 @@ class App extends Component {
 
         return (
             <div>
-                <div style={{float:'left',width:'70%'}}>
+                <div style={{float:'left',width:'67%'}}>
 
                     <PlacesAutocomplete inputProps={inputProps}  onSelect={this.handleSelect.bind(this)}/>
             <Gmaps
                 width={'100%'}
-                height={'500px'}
+                height={'350px'}
                 lat={this.state.center.lat}
                 lng={this.state.center.lng}
                 zoom={12}
@@ -325,10 +325,8 @@ class App extends Component {
                     </div>
 
                     <div>
-                        <p>Price Range</p>
-
-                        <label>Min:</label><input type="number" value={minPrice} onChange={(e)=>this.setState({minPrice:e.target.value})}/><br/>
-                        <label>Max:</label><input type="number" value={maxPrice} onChange={(e)=>this.setState({maxPrice:e.target.value})}/>
+                        <label>Min Price:</label><input type="number" value={minPrice} onChange={(e)=>this.setState({minPrice:e.target.value})}/><br/>
+                        <label>Max Price:</label><input type="number" value={maxPrice} onChange={(e)=>this.setState({maxPrice:e.target.value})}/>
                     </div>
 
                     {this.state.selectedPlace>-1?
@@ -353,11 +351,11 @@ class App extends Component {
                     }
 
 
-                    <br/><br/>
 
 
 
 
+                    <Button bsStyle="primary">Export to csv</Button>
 
 
 
@@ -366,7 +364,7 @@ class App extends Component {
                 <Line
 
                     width={1600}
-                    height={250}
+                    height={230}
                     data={{
                         labels:data.map((price, index) => {
                             return moment(price.timestamp).format("DD/MM/YY")
