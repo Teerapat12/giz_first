@@ -22,3 +22,36 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+
+/* enable absolute positioning */
+.inner-addon {
+  position: relative;
+}
+
+/* style icon */
+.inner-addon .glyphicon {
+  position: absolute;
+  padding: 10px;
+  pointer-events: none;
+}
+
+/* align icon */
+.left-addon .glyphicon  { left:  0px;}
+.right-addon .glyphicon { right: 0px;}
+
+/* add padding  */
+.left-addon input  { padding-left:  30px; }
+.right-addon input { padding-right: 30px; }
+
+#PlacesAutocomplete__autocomplete-container{
+  z-index: 100;
+}
+
+#PlacesAutocomplete__root input{
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}

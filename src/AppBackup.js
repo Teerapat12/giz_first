@@ -9,8 +9,6 @@ import geolib from 'geolib';
 
 import {Line} from 'react-chartjs-2';
 
-import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete'
-
 // Using an ES6 transpiler like Babel
 import Slider from 'react-rangeslider'
 
@@ -24,7 +22,7 @@ import Tooltip from 'react-simple-tooltip'
 const API_KEY = "AIzaSyBAfjAJYhJuoNfuA_GJvQKV93104RAnz_s";
 const params = {v: '3.exp', key: API_KEY};
 
-const back_api = 'https://asnow.co/prices'
+const back_api = 'https://asnow.co/prices';
 
 const center = {
     lat: 9.67534935986178,
@@ -128,12 +126,8 @@ class App extends Component {
             maxPrice:'',
             activePoint: null,
             tooltipTrigger: null,
-            coords:[],
-            searchBox:'',
-            center
-        };
-
-        this.onChange = (address) => this.setState({ searchBox:address })
+            coords:[]
+        }
     }
 
     updateData(){
@@ -224,15 +218,6 @@ class App extends Component {
         this.setState({locatedPlaces:plot2Graph});
     }
 
-    handleSelect(place, placeId){
-        console.log(place);
-        this.setState({place});
-
-        geocodeByAddress(place)
-            .then(results => getLatLng(results[0]))
-            .then(latLng => this.setState({center:latLng}));
-    }
-
     render() {
 
         const {coords,startDate,endDate,minPrice,maxPrice,selectedPlace,locatedPlaces} = this.state;
@@ -247,21 +232,14 @@ class App extends Component {
             return price.value;
         }));
 
-        const inputProps = {
-            value:this.state.searchBox,
-            onChange:this.onChange
-        }
-
         return (
             <div>
-                <div style={{float:'left',width:'70%'}}>
-
-                    <PlacesAutocomplete inputProps={inputProps}  onSelect={this.handleSelect.bind(this)}/>
+                <div style={{float:'left'}}>
             <Gmaps
-                width={'100%'}
-                height={'500px'}
-                lat={this.state.center.lat}
-                lng={this.state.center.lng}
+                width={'900px'}
+                height={'750px'}
+                lat={center.lat}
+                lng={center.lng}
                 zoom={12}
                 loadingMessage={'Loading..'}
                 params={params}
@@ -271,6 +249,7 @@ class App extends Component {
 
                 const isSelected = this.state.selectedPlace==index;
                 const lastPrice = coord.prices[coord.prices.length-1];
+
                 const isBetweenDateRange = !startDate||!endDate||(startDate==endDate)||moment(lastPrice.timestamp).isBetween(startDate,endDate);
                 const ispriceBetweenRange = (!minPrice||lastPrice.value>=minPrice)&&(!maxPrice||lastPrice.value<=maxPrice);
                 const isQueried = isBetweenDateRange&&ispriceBetweenRange;
@@ -309,10 +288,9 @@ class App extends Component {
             </Gmaps>
                 </div>
 
-
-
-                <div style={{'display':'inline-block', 'float':'right','marginRight':'5px','marginTop':'5px'}}>
+                <div style={{'float':'right','paddingRight':'40px'}}>
                     <div>
+                        <p>Date Range   {endDate?<i style={{'display':'inline','cursor':'pointer'}} className="fa fa-times" aria-hidden="true" onClick={()=>this.setState({startDate:null,endDate:null})}></i>:null}</p>
                     <DateRange
                         onInit={({startDate,endDate})=>console.log(startDate)}
                         onChange={({startDate,endDate})=>{
@@ -355,55 +333,67 @@ class App extends Component {
 
                     <br/><br/>
 
+                    {/*{selectedPlace>-1 && data.length>0?*/}
+                    {/*<LineChart*/}
+                        {/*data={ data.map((price,index)=>{return {x:index,y:price.value} }) }*/}
+                        {/*nogrid*/}
+                        {/*noarea*/}
+                        {/*viewBoxHeight={400}*/}
+                        {/*viewBoxWidth={600}*/}
+                    {/*/>:null}*/}
+
+                    {selectedPlace > -1 && data.length > 0 ?
 
 
 
+
+                        <Line
+
+
+
+
+                            data={{
+                                labels:data.map((price, index) => {
+                                    return moment(price.timestamp).format("DD/MM/YY")
+                                }),
+                                datasets: [
+                                    {
+                                        label: 'Diesel Price',
+                                        fill: false,
+                                        lineTension: 0.1,
+                                        backgroundColor: 'rgba(75,192,192,0.4)',
+                                        borderColor: 'rgba(75,192,192,1)',
+                                        borderCapStyle: 'butt',
+                                        borderDash: [],
+                                        borderDashOffset: 0.0,
+                                        borderJoinStyle: 'miter',
+                                        pointBorderColor: 'rgba(75,192,192,1)',
+                                        pointBackgroundColor: '#fff',
+                                        pointBorderWidth: 1,
+                                        pointHoverRadius: 5,
+                                        pointHoverBackgroundColor: 'rgba(75,192,192,1)',
+                                        pointHoverBorderColor: 'rgba(220,220,220,1)',
+                                        pointHoverBorderWidth: 2,
+                                        pointRadius: 1,
+                                        pointHitRadius: 10,
+                                        data: data.map((price, index) => {
+                                            return {x: index, y: price.value}
+                                        })
+
+                            }
+                                ]
+                            }
+                            }
+
+
+
+
+                        />:null}
 
 
 
                 </div>
 
-                <Line
-
-                    width={1600}
-                    height={250}
-                    data={{
-                        labels:data.map((price, index) => {
-                            return moment(price.timestamp).format("DD/MM/YY")
-                        }),
-                        datasets: [
-                            {
-                                label: 'Diesel Price',
-                                fill: false,
-                                lineTension: 0.1,
-                                backgroundColor: 'rgba(75,192,192,0.4)',
-                                borderColor: 'rgba(75,192,192,1)',
-                                borderCapStyle: 'butt',
-                                borderDash: [],
-                                borderDashOffset: 0.0,
-                                borderJoinStyle: 'miter',
-                                pointBorderColor: 'rgba(75,192,192,1)',
-                                pointBackgroundColor: '#fff',
-                                pointBorderWidth: 1,
-                                pointHoverRadius: 5,
-                                pointHoverBackgroundColor: 'rgba(75,192,192,1)',
-                                pointHoverBorderColor: 'rgba(220,220,220,1)',
-                                pointHoverBorderWidth: 2,
-                                pointRadius: 1,
-                                pointHitRadius: 10,
-                                data: data.map((price, index) => {
-                                    return {x: index, y: price.value}
-                                })
-
-                            }
-                        ]
-                    }
-                    }
-
-
-
-
-                />
 
             </div>
         );
