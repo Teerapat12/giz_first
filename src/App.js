@@ -332,7 +332,6 @@ class App extends Component {
                     {this.state.selectedPlace>-1?
                         <div>
                             <div >
-                                Radius
                                 <Slider
                                     style={{width:'100px'}}
                                     value={this.state.radius}
